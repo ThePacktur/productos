@@ -8,4 +8,4 @@ class Productos(models.Model):
     categoria = models.CharField(max_length=50)
     denominacionOrigen = models.CharField(max_length=50)
     cantidadProducto = models.IntegerField(max_length=15)
-    email = models.CharField(max_length=50)
+   
