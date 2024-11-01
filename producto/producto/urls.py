@@ -22,7 +22,11 @@ urlpatterns = [
     path('', views.index),
     path('productos/', views.listadoProducto),
     path('agregarProducto/',views.agregarProducto),
-    path('eliminarProducto/<int:id>',views.eliminarProducto),
-    path('actualizarProducto/<int:id>',views.actualizarProducto),
+    path('eliminarProducto/<pk>',views.eliminarProducto),
+    path('actualizarProducto/<pk>',views.actualizarProducto),
+    path('distribuidores/', views.listadoDistribuidor),
+    path('agregarDistribuidor/', views.agregarDistribuidor),
+    path('eliminarDistribuidor/<pk>', views.eliminarDistribuidor),
+    path('actualizarDistribuidor/<pk>', views.actualizarDistribuidores),
 
 ]
