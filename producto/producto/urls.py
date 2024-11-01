@@ -28,5 +28,9 @@ urlpatterns = [
     path('agregarDistribuidor/', views.agregarDistribuidor),
     path('eliminarDistribuidor/<pk>', views.eliminarDistribuidor),
     path('actualizarDistribuidor/<pk>', views.actualizarDistribuidores),
+    path('facturas/',views.listadoFactura),
+    path('agregarFactura/', views.agregarFactura),
+    path('eliminarFactura/<pk>',views.eliminarFactura),
+  
 
 ]

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from productoApp.models import Productos, Distribuidor
-from productoApp.forms import FormProducto, FormDistribuidor
+from productoApp.models import Productos, Distribuidor, Factura
+from productoApp.forms import FormProducto, FormDistribuidor, FormFactura
 
 # Create your views here.
 
@@ -18,13 +18,18 @@ def listadoDistribuidor(request):
     return render(request, 'productoApp/distribuidores.html', data)
 
 
+def listadoFactura(request):
+    facturas = Factura.objects.all()
+    data = {'facturas' : facturas}
+    return render(request, 'productoApp/factura.html', data)
+
 def agregarProducto(request):
     form = FormProducto
     if request.method == 'POST':
         form = FormProducto(request.POST)
         if form.is_valid():
             form.save()
-        return index(request)
+        return listadoProducto(request)
     data = {'form': form}
     return render(request,'productoApp/agregarProducto.html', data)
 
@@ -34,9 +39,20 @@ def agregarDistribuidor(request):
         form = FormDistribuidor(request.POST)
         if form.is_valid():
             form.save()
-        return index(request)
+        return listadoDistribuidor(request)
     data = {'form': form}
     return render(request, 'productoApp/agregarDistribuidor.html', data)
+
+def agregarFactura(request):
+    form = FormFactura
+    if request.method == 'POST':
+        form = FormFactura(request.POST)
+        if form.is_valid():
+            form.save()
+        return listadoFactura(request)
+    data = {'form': form}
+    return render(request, 'productoApp/agregarFactura.html', data)
+
 
 def eliminarProducto(request, pk):
     producto = Productos.objects.get(pk = pk)
@@ -48,6 +64,12 @@ def eliminarDistribuidor(request, pk):
     distribuidor.delete()
     return redirect('/distribuidores')
 
+def eliminarFactura(request, pk):
+    factura = Factura.objects.get(pk = pk)
+    factura.delete()
+    return redirect('/factura')
+
+
 def actualizarProducto(request, pk):
     producto = Productos.objects.get(pk = pk)
     form = FormProducto(instance=producto)
@@ -55,7 +77,7 @@ def actualizarProducto(request, pk):
         form = FormProducto(request.POST, instance=producto)
         if form.is_valid(): 
             form.save()
-        return index(request)
+        return listadoProducto(request)
     data = {'form': form}
     return render(request, 'productoApp/agregarProducto.html', data)
 
@@ -66,6 +88,17 @@ def actualizarDistribuidores(request, pk):
         form = FormDistribuidor(request.POST, instance=distribuidor)
         if form.is_valid():
             form.save()
-        return index(request)
+        return listadoDistribuidor(request)
     data = {'form': form}
     return render(request, 'productoApp/agregarDistribuidor.html', data)
+
+def actualizarFactura(request, pk):
+    factura = Factura.objects.get(pk=pk)
+    form = FormFactura(instance=factura)
+    if request.method == "POST":
+        form = FormFactura(request.POST, instance=factura)
+        if form.is_valid():
+            form.save()
+        return listadoFactura(request)
+    data = {'form': form}
+    return render(request, 'productoApp/agregarFactura.html',data)
