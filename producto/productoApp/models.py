@@ -12,7 +12,7 @@ class Productos(models.Model):
     cantidadProducto = models.IntegerField(max_length=15)
 
     def __str__(self):
-        return  self.idProducto
+        return  f'Producto: {self.idProducto}'
    
 class Distribuidor(models.Model):
     idDistribuidor = models.AutoField(primary_key=True)
@@ -24,6 +24,15 @@ class Distribuidor(models.Model):
     fechaRecepcion = models.DateField()
 
     def __str__(self):
-        return self.idDistribuidor
-    
+        return f'Distribuidor: {self.idDistribuidor}'
+
+class Factura(models.Model):
+    idFactura = models.AutoField(primary_key=True)
+    fechaFacturacion = models.DateField()
+    precioUnitario = models.FloatField()
+    iva = models.FloatField()
+    descuentoTotal = models.FloatField()
+
+    def __str__(self):
+        return f'Factura: {self.idFactura}'
     
