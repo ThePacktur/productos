@@ -14,38 +14,44 @@ class Distribuidor(models.Model):
     ciudad = models.CharField(max_length=15)
     fechaDespacho = models.DateField()
     fechaRecepcion = models.DateField()
-
+    
     def clean(self):
         if self.fechaDespacho > self.fechaRecepcion:
             raise ValidationError({
                 'fechaRecepcion': _('La fecha de recepción debe ser igual o posterior a la fecha de despacho.')
             })
-
+        
+        if not self.telefono.isdigit():
+            raise ValidationError({'telefono': _('El número de teléfono debe contener solo dígitos.')})
+        if len(self.telefono) < 10:
+            raise ValidationError({'telefono': _('El número de teléfono debe tener al menos 10 dígitos.')})
     def __str__(self):
         return f'Distribuidor: {self.idDistribuidor} - {self.ciudad}'
 
 class Factura(models.Model):
     idFactura = models.AutoField(primary_key=True)
+    distribuidor = models.ForeignKey(Distribuidor, on_delete=models.CASCADE, related_name="facturas", null=True, blank=True)
     fechaFacturacion = models.DateField()
     precioUnitario = models.DecimalField(max_digits=15, decimal_places=2, validators=[validacion_positivo])
     iva = models.DecimalField(max_digits=5, decimal_places=2, validators=[validacion_positivo])
     descuentoTotal = models.DecimalField(max_digits=15, decimal_places=2, validators=[validacion_positivo])
-    totalApagar = models.DecimalField(max_digits=15, decimal_places=2, validators=[validacion_positivo])
+    
+    @property
+    def totalApagar(self):
+        """Calcula automáticamente el total a pagar."""
+        return round((self.precioUnitario * (1 + self.iva / Decimal('100'))) - self.descuentoTotal, 2)
 
     def clean(self):
-        calculo_total = (self.precioUnitario * (1 + self.iva / Decimal('100'))) - self.descuentoTotal
-        if self.totalApagar != calculo_total:
-            raise ValidationError({
-                'totalApagar': _('El total a pagar no coincide con el cálculo total basado en el precio, IVA y descuento.')
-            })
+        if self.totalApagar < 0:  # Asegúrate de que el total no sea negativo
+            raise ValidationError(_('El total a pagar no puede ser negativo.'))
 
     def __str__(self):
         return f'Factura: {self.idFactura} - Precio Total: {self.totalApagar}'
 
 class Productos(models.Model):
     idProducto = models.AutoField(primary_key=True)
-    distribuidor = models.ForeignKey(Distribuidor, on_delete=models.CASCADE)
-    factura = models.ForeignKey(Factura, on_delete=models.CASCADE)
+    distribuidores = models.ManyToManyField(Distribuidor, related_name="productos", null=True, blank=True )
+    facturas = models.ManyToManyField(Factura, related_name="productos", null=True, blank=True)
     nombreProducto = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=50)
     categoria = models.CharField(max_length=50)

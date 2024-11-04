@@ -31,6 +31,7 @@ urlpatterns = [
     path('facturas/',views.listadoFactura),
     path('agregarFactura/', views.agregarFactura),
     path('eliminarFactura/<pk>',views.eliminarFactura),
+    path('actualizarFactura/<pk>', views.actualizarFactura),
   
 
 ]
