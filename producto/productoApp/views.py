@@ -15,7 +15,7 @@ def listadoProducto(request):
 def listadoDistribuidor(request):
     distribuidores = Distribuidor.objects.all()
     data = {'distribuidores': distribuidores}
-    return render(request, 'productoApp/distribuidores.html', data)
+    return render(request, 'productoApp/distribuidor.html', data)
 
 
 def listadoFactura(request):
@@ -49,6 +49,8 @@ def agregarFactura(request):
         form = FormFactura(request.POST)
         if form.is_valid():
             form.save()
+        else:
+            print(form.errors)
         return listadoFactura(request)
     data = {'form': form}
     return render(request, 'productoApp/agregarFactura.html', data)
