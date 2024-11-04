@@ -69,7 +69,7 @@ def eliminarDistribuidor(request, pk):
 def eliminarFactura(request, pk):
     factura = Factura.objects.get(pk = pk)
     factura.delete()
-    return redirect('/factura')
+    return redirect('/facturas')
 
 
 def actualizarProducto(request, pk):

@@ -67,7 +67,7 @@ class FormFactura(forms.ModelForm):
         model = Factura
         fields = '__all__'
         widgets = {
-            'fechaFacturacion': forms.DateInput(attrs={'type': 'date'}),
+           
             'fechaFacturacion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'precioUnitario': forms.NumberInput(attrs={
                 'class': 'form-control',
