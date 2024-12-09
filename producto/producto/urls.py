@@ -20,6 +20,12 @@ from productoApp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
+    path('products/', views.productList),
+    path('products/<int:pk>', views.productoDetail),
+    path('dristribuidors/', views.distribuidorList),
+    path('distribuidors/<int:pk>',views.distribuidorDetail),
+    path('fatures/', views.facturaList),
+    path('factures/<int:pk>', views.facturaDetail),
     path('productos/', views.listadoProducto),
     path('agregarProducto/',views.agregarProducto),
     path('eliminarProducto/<pk>',views.eliminarProducto),

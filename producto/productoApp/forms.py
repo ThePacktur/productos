@@ -1,7 +1,7 @@
-# productoApp/forms.py
-
 from django import forms
 from productoApp.models import Productos, Distribuidor, Factura
+
+
 class FormProducto(forms.ModelForm):
     class Meta:
         model = Productos

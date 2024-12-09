@@ -1,8 +1,126 @@
 from django.shortcuts import render, redirect
+from .serializers import ProductoSerializer, DistribuidorSerializer, FacturaSerializer 
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
 from productoApp.models import Productos, Distribuidor, Factura
 from productoApp.forms import FormProducto, FormDistribuidor, FormFactura
 
 # Create your views here.
+
+@api_view(['GET','POST'])
+def productList(request):
+    if request.method == 'GET':
+        productos = Productos.objects.all()
+        serializer = ProductoSerializer(productos, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = ProductoSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET','POST'])
+def distribuidorList(request):
+    if request.method == 'GET':
+        distribuidores = Distribuidor.objects.all()
+        serializer = DistribuidorSerializer(distribuidores, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = DistribuidorSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET','POST'])
+def facturaList(request):
+    if request.method == 'GET':
+        facturas = Factura.objects.all()
+        serializer = FacturaSerializer(facturas, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = FacturaSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+@api_view(['GET','PUT','DELETE'])
+def productoDetail(request, pk):
+    try:
+        producto = Productos.object.get(pk=pk)
+    except Productos.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = ProductoSerializer(producto)
+        return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        serializer = ProductoSerializer(producto, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'DELETE':
+        status.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET','PUT','DELETE'])
+def distribuidorDetail(request, pk):
+    try:
+        distribuidor = Distribuidor.object.get(pk=pk)
+    except Distribuidor.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = DistribuidorSerializer(distribuidor)
+        return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        serializer = DistribuidorSerializer(distribuidor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'DELETE':
+        status.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET','PUT','DELETE'])
+def facturaDetail(request, pk):
+    try:
+        factura = Factura.object.get(pk=pk)
+    except Factura.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = FacturaSerializer(factura)
+        return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        serializer = FacturaSerializer(factura, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'DELETE':
+        status.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 def index(request):
     return render(request, 'productoApp/index.html')
