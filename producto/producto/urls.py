@@ -14,18 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from productoApp import views
+router = DefaultRouter()
+router.register('products', views.ProductoViewSets)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('products/', views.productList),
-    path('products/<int:pk>', views.productoDetail),
-    path('distribuidors/', views.distribuidorList),
-    path('distribuidors/<int:pk>',views.distribuidorDetail),
-    path('factures/', views.facturaList),
-    path('factures/<int:pk>', views.facturaDetail),
+    path('', include(router.urls)),#views.ProductList.as_view()),
+    #path('products/<int:pk>', views.ProductDetail.as_view()),
+    path('distribuidors/', views.DistribuidorList.as_view()),
+    path('distribuidors/<int:pk>',views.DistribuidorDetail.as_view()),
+    path('factures/', views.FactureList.as_view()),
+    path('factures/<int:pk>', views.FactureDetail.as_view()),
     path('productos/', views.listadoProducto),
     path('agregarProducto/',views.agregarProducto),
     path('eliminarProducto/<pk>',views.eliminarProducto),

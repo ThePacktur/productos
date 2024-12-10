@@ -16,9 +16,19 @@
 
     <form method="POST">
         {% csrf_token %}
+        {% for field in form %}
         <div class="mb-3">
-            {{ form.as_p }}  <!-- Aquí mantienes los campos del formulario de Django -->
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="text-danger">
+                {% for error in field.errors %}
+                <small>{{ error }}</small><br>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
+        {% endfor %}
         <div class="mb-3">
             <label for="totalApagar" class="form-label">Total a Pagar</label>
             <input type="number" id="totalApagar" name="totalApagar" class="form-control" readonly>

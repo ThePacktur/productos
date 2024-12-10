@@ -10,10 +10,23 @@
     <div class="alert alert-info display-1 text-center">LISTADO DE DISTRIBUIDORES</div>
 
     <form method="POST">
-        {{form.as_p}}
         {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="text-danger">
+                {% for error in field.errors %}
+                <small>{{ error }}</small><br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
         <input type="submit" value="AGREGAR DISTRIBUIDOR" class="btn btn-primary w-100">
     </form>
+
     
     <a href="/distribuidores" class="btn btn-outline-primary mt-4 w-100">Ver Distribuidores</a>
 

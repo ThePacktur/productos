@@ -1,6 +1,6 @@
 from django import forms
 from productoApp.models import Productos, Distribuidor, Factura
-
+from django.core.exceptions import ValidationError
 
 class FormProducto(forms.ModelForm):
     class Meta:
@@ -43,12 +43,12 @@ class FormDistribuidor(forms.ModelForm):
             'fechaRecepcion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
     def clean_telefono(self):
-         telefono = self.cleaned_data.get('telefono')
-         if not telefono.isdigit():
-             raise forms.ValidationError(('El número de teléfono debe contener solo dígitos.'))
-         if len(telefono) < 10:
-             raise forms.ValidationError(('El número de teléfono debe tener al menos 10 dígitos.'))
-         return telefono
+        telefono = self.cleaned_data.get('telefono')
+        if not telefono.isdigit():
+            raise ValidationError('El número de teléfono debe contener solo dígitos.')
+        if len(telefono) != 10:
+            raise ValidationError('El número de teléfono debe tener exactamente 10 dígitos.')
+        return telefono
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -61,7 +61,9 @@ class FormDistribuidor(forms.ModelForm):
         fecha_despacho = self.cleaned_data.get('fechaDespacho')
         fecha_recepcion = self.cleaned_data.get('fechaRecepcion')
         if fecha_despacho and fecha_recepcion and fecha_despacho > fecha_recepcion:
-            self.add_error('fechaRecepcion', ('La fecha de recepción debe ser igual o posterior a la fecha de despacho.'))
+            self.add_error('fechaRecepcion', 'La fecha de recepción debe ser igual o posterior a la fecha de despacho.')
+
+
 class FormFactura(forms.ModelForm):
     class Meta:
         model = Factura
@@ -85,3 +87,26 @@ class FormFactura(forms.ModelForm):
                 'required': 'required'
             }),
         }
+    def clean(self):
+        super().clean()
+        fecha_facturacion = self.cleaned_data.get('fechaFacturacion')
+        fecha_despacho = None
+        distribuidor_id = self.cleaned_data.get('distribuidor_id')
+
+        # Verificar si hay un distribuidor relacionado para obtener su fecha de despacho
+        if distribuidor_id:
+            distribuidor = Distribuidor.objects.filter(id=distribuidor_id).first()
+            if distribuidor:
+                fecha_despacho = distribuidor.fechaDespacho
+
+        if fecha_facturacion and fecha_despacho:
+            if fecha_facturacion < fecha_despacho:
+                self.add_error('fechaFacturacion', 'La fecha de facturación no puede ser anterior a la fecha de despacho.')
+
+        # Validar relación entre envío y facturación
+        fecha_recepcion = None
+        if distribuidor_id:
+            fecha_recepcion = distribuidor.fechaRecepcion
+
+        if fecha_recepcion and fecha_facturacion and fecha_recepcion < fecha_facturacion:
+            self.add_error('fechaFacturacion', 'La fecha de facturación debe ser anterior o igual a la fecha de recepción.')
